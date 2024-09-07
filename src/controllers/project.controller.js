@@ -14,7 +14,7 @@ const createProject = async(req,res)=>{
 
     const project = await Project.create({projectName,projectDescription})
     const createdProject = await Project.findById(project._id);
-
+    
     if (!createdProject) {
         throw new ApiError(500,"Project creation failed")
     }

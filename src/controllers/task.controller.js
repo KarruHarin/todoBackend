@@ -43,4 +43,147 @@ const createTaskAndAssign = async (req, res) => {
   }
 };
 
-export  {createTaskAndAssign};
+const deleteTask = async(req,res)=>{
+
+  try {
+    const {taskId} = req.body;
+
+    const deletingTask = await Task.deleteOne({taskId});
+    if(deletingTask.deletedCount==0){
+      return res.status(404).json({ message: "Task not found" });
+    }
+    return res.status(201).json(new ApiResponse(200,{},"Task deleted successfully"))
+
+
+    
+  } catch (error) {
+    console.log("Problem in deleting project :" ,error);
+  }
+
+
+}
+const editTask = async(req,res)=>{
+  try {
+    const {taskId,taskName,taskDescription}=req.body;
+
+    let task1 = await Task.findById({taskId})
+    if(!task1){
+      return  res.status(404).json({ message: "Task not found" });
+    }
+    task1.taskName = task1.taskName || taskName;
+    task1.taskDescription = task1.taskDescription || taskDescription;
+    const updatedTask = await task1.save();
+    return res.status(201).json(new ApiResponse(200,updatedTask,"Task updated successfully"))
+
+  } catch (error) {
+    console.error("Problem in editing Task:", error);
+    
+  }
+}
+
+const editPriority = async(req,res)=>{
+
+  try {
+    const {taskId,priority} = req.body;
+
+    let task1 = await Task.findById({taskId})
+
+    if(!task1){
+      return  res.status(404).json({ message: "Task not found" });
+    }
+
+    task1.priority = priority || task1.priority;
+
+    const updatedTask = await task1.save();
+
+    return res.status(201).json(new ApiResponse(200,updatedTask,"Task updated successfully"))
+
+
+    
+  } catch (error) {
+    console.error("Problem in editing Task:", error);
+
+    
+  }
+}
+
+const editAsign = async (req,res)=>{
+
+  try {
+    const {taskId,memberId} = req.body;
+
+    let task1 = await Task.findById({taskId})
+
+    if(!task1){
+      return  res.status(404).json({ message: "Task not found" });
+    }
+
+    task1.asign = memberId || task1.asign;
+
+    const hi = await task1.save();
+
+
+    return res.status(201).json(new ApiResponse(200,hi,"Task updated successfully"))
+
+
+    
+  } catch (error) {
+    console.error("Problem in editing Task:", error);
+
+    
+  }
+
+}
+
+
+const editProgress = async(req,res)=>{
+  try {
+    const {taskId,progress} = req.body;
+
+    let task1 = await Task.findById({taskId})
+
+    if(!task1){
+      return  res.status(404).json({ message: "Task not found" });
+    }
+
+    task1.taskProgress = progress || task1.taskProgress;
+
+    const hi = await task1.save();
+
+
+    return res.status(201).json(new ApiResponse(200,hi,"Task updated successfully"))
+
+    
+  } catch (error) {
+    console.error("Problem in editing Task:", error);
+    
+  }
+}
+
+
+const editDate = async(req,res)=>{
+  try {
+    const {taskId,duedate} = req.body;
+
+    let task1 = await Task.findById({taskId})
+
+    if(!task1){
+      return  res.status(404).json({ message: "Task not found" });
+    }
+
+    task1.dueDate = duedate || task1.dueDate;
+
+    const hi = await task1.save();
+
+
+    return res.status(201).json(new ApiResponse(200,hi,"Task updated successfully"))
+
+    
+  } catch (error) {
+    console.error("Problem in editing Task:", error);
+    
+  }
+}
+
+
+export  {createTaskAndAssign,editTask,editPriority,editAsign,editProgress,editDate};
