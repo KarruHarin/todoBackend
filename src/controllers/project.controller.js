@@ -98,4 +98,5 @@ const getProjectDetails = async(res,req)=>{
 
 }
 
-export {createProject,editProject,deleteProject,ge}
+export {createProject,editProject,deleteProject,getProjectDetails}
+
