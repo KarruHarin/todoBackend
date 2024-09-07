@@ -23,7 +23,7 @@ const companySchema = new Schema({
     projects:[
         {
             type:Schema.Types.ObjectId,
-            ref:"Projects"
+            ref:"Project"
         }
     ]
 },{timestamps:true});

@@ -3,6 +3,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { Company } from "../models/company.model.js";
 import { User } from "../models/user.model.js";
 import jwt from 'jsonwebtoken';
+import { Project } from "../models/project.model.js";
+import { Task } from "../models/task.model.js";
 
 const createCompany=async(req,res)=>{
     try {
@@ -42,6 +44,60 @@ const createCompany=async(req,res)=>{
 
     } catch (error) {
         throw new ApiError(401,error)
+    }
+}
+
+const editCompany=async(req,res)=>{
+
+  try {
+    const {companyId,companyName}=req.body;
+  const updatedCompany = await Company.updateOne({_id:companyId},
+    {
+      $set:{
+        companyName:companyName
+      }
+    },
+    {
+      new:true
+    }
+  );
+  if (updatedCompany.matchedCount===0) {
+    return res.status(404).json({message:"No Company found"})
+    
+  }
+  return res.status(201).json(new ApiResponse(200,updatedCompany,"Company updated successfully"))
+  } catch (error) {
+    console.log("Error updating company",error);
+    
+  }
+
+
+}
+const deleteCompany=async(req,res)=>{
+   try {
+        const {companyId} = req.body ;
+
+        const comp = await Company.findById({companyId});
+        if(!comp){
+          return (res.json("Company not found"))
+        }
+        
+
+        const deletingCompany = await Company.deleteOne({_id:companyId});
+        const deleteProject = await Project.deleteMany({company:companyId});
+
+        if (deleteProject.deletedCount === 0) {
+          return res.status(404).json({ message: "No projects found in given Company" });
+      }
+        if (deletingCompany.deletedCount === 0) {
+            return res.status(404).json({ message: "Company not found" });
+        }
+        return res.status(201).json(new ApiResponse(200,{},"Company deleted successfully"))
+
+
+    } catch (error) {
+        console.log("Problem in deleting Company :" ,error);
+        
     }
 }
 
@@ -129,4 +185,4 @@ const getCompanyDetails = async(req,res)=>{
   }
 }
 
-export {joinCompany,createCompany,getAllWorkers,getCompanyDetails}
+export {joinCompany,createCompany,getAllWorkers,getCompanyDetails,editCompany,deleteCompany}
