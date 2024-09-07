@@ -9,7 +9,7 @@ router.route("/createCompany").post(createCompany);
 router.route("/createProject").post(verifyJWT,createProject);
 router.route("/getCompanyDetails").post(verifyJWT,getCompanyDetails)
 router.route("/createTaskAndAssign").post(createTaskAndAssign)
-router.route("/company/:projectId").post(getProjectDetails)
+router.route("/:projectId").post(getProjectDetails)
 
 
 export default router;
