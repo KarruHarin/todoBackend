@@ -11,7 +11,7 @@ const createProject = async(req,res)=>{
         if (projectName === "") {
             throw new ApiError(400, "All fields are required"); 
         }
-
+        console.log(companyId)
     const project = await Project.create({projectName})
     const createdProject = await Project.findById(project._id);
 

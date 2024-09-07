@@ -105,7 +105,9 @@ const getAllWorkers = async (req,res)=>{
 const getCompanyDetails = async(req,res)=>{
   try {
     const {companyId}=req.body;
-    const company =await Company.findById(companyId).populate("projects");
+  
+    const company =await Company.findById(companyId)
+  //  const company =await Company.findById(companyId).populate("projects");
     if (!company) {
       throw new ApiError(400, "Company not found");
     }
