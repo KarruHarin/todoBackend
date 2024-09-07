@@ -152,7 +152,7 @@ const getAllWorkers = async (req,res)=>{
 
   const UserDetails = company.workers.map(worker => ({
     id: worker._id.toString(),
-    name: worker.name
+    name: worker.username//dont forget
   }));
   
   return res.status(201).json(new ApiResponse(201,UserDetails,"results fetched"))

@@ -51,10 +51,21 @@ const editProject = async (req, res) => {
 const deleteProject = async (req , res)=>{
     try {
         const {projectId} = req.body ;
-        const deletingProject = await Project.deleteOne({projectId});
+        const pro = await Project.findById({projectId})
+        if(!pro){
+            return res.status(404).json({ message: "Project not found" });
+        }
+
+        pro.todos.map((todo)=>Task.deleteOne(todo));
+        const x = await pro.save();
+
+        const deletingProject = await Project.deleteOne({_id:projectId});
+        
+        
         if (deletingProject.deletedCount === 0) {
             return res.status(404).json({ message: "Project not found" });
         }
+
         return res.status(201).json(new ApiResponse(200,{},"Project deleted successfully"))
 
 
