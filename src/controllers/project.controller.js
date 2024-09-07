@@ -7,12 +7,12 @@ import { Project } from "../models/project.model.js";
 
 const createProject = async(req,res)=>{
     try {
-        const {projectName,companyId}=req.body;
+        const {projectName,projectDescription,companyId}=req.body;
         if (projectName === "") {
             throw new ApiError(400, "All fields are required"); 
         }
 
-    const project = await Project.create({projectName})
+    const project = await Project.create({projectName,projectDescription})
     const createdProject = await Project.findById(project._id);
 
     if (!createdProject) {
@@ -30,6 +30,40 @@ const createProject = async(req,res)=>{
         throw new ApiError(401,error)
     }
 }
+
+const editProject = async (req, res) => {
+    try {
+        const { projectId, projectName, projectDescription } = req.body;
+        let neededProject = await Project.findById(projectId);
+        if (!neededProject) {
+            return res.status(404).json({ message: "Project not found" });
+        }
+        neededProject.projectName = projectName || neededProject.projectName;
+        neededProject.projectDescription = projectDescription || neededProject.projectDescription;
+        const updatedProject = await neededProject.save();
+        return res.status(201).json(new ApiResponse(200,updatedProject,"Project updated successfully"))
+
+    } catch (error) {
+        console.error("Problem in editing project:", error);
+    }
+};
+
+const deleteProject = async (req , res)=>{
+    try {
+        const {projectId} = req.body ;
+        const deletingProject = await Project.deleteOne({projectId});
+        if (deletingProject.deletedCount === 0) {
+            return res.status(404).json({ message: "Project not found" });
+        }
+        return res.status(201).json(new ApiResponse(200,{},"Project deleted successfully"))
+
+
+    } catch (error) {
+        console.log("Problem in deleting project :" ,error);
+        
+    }
+}
+
 
 const getProjectDetails = async(res,req)=>{
 
@@ -64,4 +98,4 @@ const getProjectDetails = async(res,req)=>{
 
 }
 
-export default createProject
+export {createProject,editProject,deleteProject,ge}
