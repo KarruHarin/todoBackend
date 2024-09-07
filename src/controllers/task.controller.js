@@ -42,3 +42,5 @@ const createTaskAndAssign = async (req, res) => {
     return res.status(500).json(new ApiError(500, "Internal Server Error"));
   }
 };
+
+export default createTaskAndAssign;

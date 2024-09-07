@@ -31,4 +31,37 @@ const createProject = async(req,res)=>{
     }
 }
 
+const getProjectDetails = async(res,req)=>{
+
+    try {
+        const {projectId}=req.body;
+
+        const project = await Project.findById(projectId).populate("todos");
+        if(!project){
+            throw new ApiError(400,"Project Not found")
+        }
+        const details = [
+            {
+                projectName : project.projectName,
+                projectDescription:project.projectDescription,
+                todos:project.todos.map((todo)=>({
+                    todoId : todo.taskName,
+                    taskProgress:todo.taskProgress,
+                    priority:todo.priority,
+                    duedate:todo.duedate,
+                    asign:todo.asign
+                }))
+            }
+        ]
+        return res.status(201).json(new ApiResponse(201,details,"Project Details fetched"))
+
+    } catch (error) {
+        throw new ApiError(401,error)
+        
+    }
+
+
+
+}
+
 export default createProject
