@@ -1,9 +1,26 @@
+import { response } from "express";
 import { Company } from "../models/company.model.js";
 import { Project } from "../models/project.model.js";
 import { Task } from "../models/task.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
+const getTask = async(req,res)=>{
+
+  try {
+    const {projectId}=req.params
+
+    const project = Project.findById({projectId}).populate("todos")
+    if(!project){
+      throw new ApiError(500,"Project Not found")
+    }
+
+    return res.status(201).json(new ApiResponse(200,project,"Tasks Details"))
+  } catch (error) {
+    throw new ApiError(401,error)
+  }
+
+}
 const createTaskAndAssign = async (req, res) => {
   try {
     const { taskName, projectId, userId, taskProgress, priority, dueDate } = req.body;
@@ -186,4 +203,4 @@ const editDate = async(req,res)=>{
 }
 
 
-export  {createTaskAndAssign,editTask,editPriority,editAsign,editProgress,editDate};
+export  {createTaskAndAssign,editTask,editPriority,editAsign,editProgress,editDate,getTask};
