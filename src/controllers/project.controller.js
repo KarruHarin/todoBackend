@@ -12,8 +12,13 @@ const createProject = async(req,res)=>{
         if (projectName === "") {
             throw new ApiError(400, "All fields are required"); 
         }
+<<<<<<< HEAD
+     
+    const project = await Project.create({projectName})
+=======
 
     const project = await Project.create({projectName,projectDescription})
+>>>>>>> 3ef10c09092c80ffae70965dac26eb02058680b0
     const createdProject = await Project.findById(project._id);
     
     if (!createdProject) {

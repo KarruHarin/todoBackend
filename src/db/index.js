@@ -2,7 +2,9 @@ import mongoose from "mongoose";
 import { DB_NAME } from "../Constants.js";
 
 const connectDB = async () => {
+    
     try {
+    console.log(`${process.env.PORT}/${DB_NAME}`)
         const connectionInstance = await mongoose.connect(`${process.env.MONGODB_URL}/${DB_NAME}`, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
