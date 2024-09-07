@@ -64,4 +64,4 @@ const getProjectDetails = async(res,req)=>{
 
 }
 
-export default createProject
+export  {createProject,getProjectDetails};
