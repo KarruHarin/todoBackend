@@ -97,3 +97,4 @@ const getProjectDetails = async(res,req)=>{
 }
 
 export {createProject,editProject,deleteProject,getProjectDetails}
+

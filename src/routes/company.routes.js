@@ -2,7 +2,7 @@ import { Router } from "express";
 import {createCompany, getAllWorkers, getCompanyDetails, joinCompany} from "../controllers/company.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {createProject,getProjectDetails} from "../controllers/project.controller.js";
-import createTaskAndAssign from "../controllers/task.controller.js";
+import {createTaskAndAssign} from "../controllers/task.controller.js";
 
 const router = Router()
 router.route("/createCompany").post(createCompany);

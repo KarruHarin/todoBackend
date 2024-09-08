@@ -43,4 +43,4 @@ const createTaskAndAssign = async (req, res) => {
   }
 };
 
-export default createTaskAndAssign;
+export  {createTaskAndAssign};
