@@ -44,7 +44,6 @@ const createCompany=async(req,res)=>{
         throw new ApiError(401,error)
     }
 }
-
 const editCompany=async(req,res)=>{
 
   try {
@@ -76,6 +75,7 @@ const deleteCompany=async(req,res)=>{
         const {companyId} = req.body ;
         const deletingCompany = await Company.deleteOne({_id:companyId});
         const deleteProject = await Project.deleteMany({company:companyId});
+        
         if (deleteProject.deletedCount === 0) {
           return res.status(404).json({ message: "No projects found in given Company" });
       }
@@ -142,11 +142,11 @@ const getAllWorkers = async (req,res)=>{
 
   const UserDetails = company.workers.map(worker => ({
     id: worker._id.toString(),
-    name: worker.name
+    name: worker.username
   }));
   
   return res.status(201).json(new ApiResponse(201,UserDetails,"results fetched"))
-}
+};
 
 const getCompanyDetails = async(req,res)=>{
   try {

@@ -64,11 +64,10 @@ const deleteProject = async (req , res)=>{
     }
 }
 
-
 const getProjectDetails = async(res,req)=>{
 
     try {
-        const {projectId}=req.body;
+        const {projectId}=req.params;
 
         const project = await Project.findById(projectId).populate("todos");
         if(!project){
@@ -76,6 +75,7 @@ const getProjectDetails = async(res,req)=>{
         }
         const details = [
             {
+                projectId:project._id,
                 projectName : project.projectName,
                 projectDescription:project.projectDescription,
                 todos:project.todos.map((todo)=>({
@@ -90,12 +90,10 @@ const getProjectDetails = async(res,req)=>{
         return res.status(201).json(new ApiResponse(201,details,"Project Details fetched"))
 
     } catch (error) {
-        throw new ApiError(401,error)
+        console.log("error is here",error);
+        
         
     }
-
-
-
 }
 
-export {createProject,editProject,deleteProject,ge}
+export {createProject,editProject,deleteProject,getProjectDetails}

@@ -1,8 +1,8 @@
-import { Company } from "../models/company.model";
-import { Project } from "../models/project.model";
-import { Task } from "../models/task.model";
-import { ApiError } from "../utils/ApiError";
-import { ApiResponse } from "../utils/ApiResponse";
+import { Company } from "../models/company.model.js";
+import { Project } from "../models/project.model.js";
+import { Task } from "../models/task.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
 const createTaskAndAssign = async (req, res) => {
   try {
