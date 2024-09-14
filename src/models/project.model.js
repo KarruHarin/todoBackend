@@ -19,7 +19,7 @@ const projectSchema = new Schema({
     todos:[
         {
             type:Schema.Types.ObjectId,
-            ref:"Tasks"
+            ref:"Task"
         }
     ]
 

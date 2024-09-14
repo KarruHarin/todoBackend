@@ -3,6 +3,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { Company } from "../models/company.model.js";
 import { User } from "../models/user.model.js";
 import jwt from 'jsonwebtoken';
+import { Project } from "../models/project.model.js";
+import { Task } from "../models/task.model.js";
 
 const createCompany=async(req,res)=>{
     try {
@@ -73,8 +75,16 @@ const editCompany=async(req,res)=>{
 const deleteCompany=async(req,res)=>{
    try {
         const {companyId} = req.body ;
+
+        const comp = await Company.findById({companyId});
+        if(!comp){
+          return (res.json("Company not found"))
+        }
+        
+
         const deletingCompany = await Company.deleteOne({_id:companyId});
         const deleteProject = await Project.deleteMany({company:companyId});
+
         
         if (deleteProject.deletedCount === 0) {
           return res.status(404).json({ message: "No projects found in given Company" });
@@ -142,7 +152,7 @@ const getAllWorkers = async (req,res)=>{
 
   const UserDetails = company.workers.map(worker => ({
     id: worker._id.toString(),
-    name: worker.username
+    name: worker.username//dont forget
   }));
   
   return res.status(201).json(new ApiResponse(201,UserDetails,"results fetched"))
@@ -151,7 +161,9 @@ const getAllWorkers = async (req,res)=>{
 const getCompanyDetails = async(req,res)=>{
   try {
     const {companyId}=req.body;
-    const company =await Company.findById(companyId).populate("projects");
+  
+    // const company =await Company.findById(companyId)
+   const company =await Company.findById(companyId).populate("projects");
     if (!company) {
       throw new ApiError(400, "Company not found");
     }

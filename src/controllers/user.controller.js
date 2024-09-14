@@ -229,6 +229,26 @@ const getAllCompanies = async(req,res) => {
   }
 }
 
+const getAllTasks = async (req,res)=>{
+  try {
+    const {userId}=req.body;
+    const user = await User.findById(userId).populate("tasks")
+    if (!user) {
+      throw new ApiError(400,"User Not Found")
+    }
+    const TaskDetails = user.tasks.map(task=>({
+      id:task._id.toString(),
+      name:task.taskName,
+      priority:task.priority,
+      progress:task.taskProgress,
+      dueDate:task.dueDate
+    }))
+    return res.status(201).json(new ApiResponse(201,TaskDetails,"Task fetch successfull"))
+  } catch (error) {
+    console.log("Error in fetching tasks of user",error);
+  }
+}
+
 export {
   registerUser,
   loginUser,
@@ -236,5 +256,6 @@ export {
   logoutUser,
   refreshAccessToken,
   checking,
-  getAllCompanies
+  getAllCompanies,
+  getAllTasks
 };

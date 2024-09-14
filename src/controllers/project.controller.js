@@ -3,7 +3,7 @@ import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Company } from "../models/company.model.js";
 import { Project } from "../models/project.model.js";
-
+import { Task } from "../models/task.model.js";
 
 const createProject = async(req,res)=>{
     try {
@@ -14,7 +14,7 @@ const createProject = async(req,res)=>{
 
     const project = await Project.create({projectName,projectDescription})
     const createdProject = await Project.findById(project._id);
-
+    
     if (!createdProject) {
         throw new ApiError(500,"Project creation failed")
     }
@@ -51,10 +51,21 @@ const editProject = async (req, res) => {
 const deleteProject = async (req , res)=>{
     try {
         const {projectId} = req.body ;
-        const deletingProject = await Project.deleteOne({projectId});
+        const pro = await Project.findById({projectId})
+        if(!pro){
+            return res.status(404).json({ message: "Project not found" });
+        }
+
+        pro.todos.map((todo)=>Task.deleteOne(todo));
+        const x = await pro.save();
+
+        const deletingProject = await Project.deleteOne({_id:projectId});
+        
+        
         if (deletingProject.deletedCount === 0) {
             return res.status(404).json({ message: "Project not found" });
         }
+
         return res.status(201).json(new ApiResponse(200,{},"Project deleted successfully"))
 
 
@@ -64,37 +75,44 @@ const deleteProject = async (req , res)=>{
     }
 }
 
-const getProjectDetails = async(res,req)=>{
 
-    try {
-        const {projectId}=req.params;
+const getProjectDetails = async(req,res)=>{
+        try {
+ 
+            const {projectId}=req.params
+        
 
-        const project = await Project.findById(projectId).populate("todos");
-        if(!project){
-            throw new ApiError(400,"Project Not found")
-        }
-        const details = [
-            {
-                projectId:project._id,
-                projectName : project.projectName,
-                projectDescription:project.projectDescription,
-                todos:project.todos.map((todo)=>({
-                    todoId : todo.taskName,
-                    taskProgress:todo.taskProgress,
-                    priority:todo.priority,
-                    duedate:todo.duedate,
-                    asign:todo.asign
-                }))
+            const project = await Project.findById(projectId).populate("todos");
+            if(!project){
+                throw new ApiError(400,"Project Not found")
             }
-        ]
-        return res.status(201).json(new ApiResponse(201,details,"Project Details fetched"))
+            console.log(project)
+            const details = [
+                {
+                    companyId:project.company,
+                    projectId:project._id,
+                    projectName : project.projectName,
+                    projectDescription:project.projectDescription,
+                    todos:project.todos.map((todo)=>({
+                        taskId : todo._id,
+                        todoId : todo.taskName,
+                        taskProgress:todo.taskProgress,
+                        priority:todo.priority,
+                        duedate:todo.dueDate,
+                        asign:todo.asign
+                    }))
+                }
+            ]
+            return res.status(201).json(new ApiResponse(201,details,"Project Details fetched"))
 
-    } catch (error) {
-        console.log("error is here",error);
-        
-        
+        } catch (error) {
+            throw new ApiError(401,error)
+            
+        }
+
+
+
     }
-}
 
 export {createProject,editProject,deleteProject,getProjectDetails}
 

@@ -27,7 +27,6 @@ const userSchema = new Schema({
             ref: "Company"
         }
     ],
-    
     working: [
         {
             type: Schema.Types.ObjectId,
@@ -36,7 +35,11 @@ const userSchema = new Schema({
     ],
     refreshToken: {
         type: String
-    }
+    },
+    tasks:[{
+        type:Schema.Types.ObjectId,
+        ref:"Task"
+    }]
 }, { timestamps: true });
 
 // Pre-save middleware to hash the password
