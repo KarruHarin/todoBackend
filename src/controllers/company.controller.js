@@ -103,7 +103,7 @@ const deleteCompany=async(req,res)=>{
 
 const joinCompany = async (req, res) => {
   try {
-    const { companyCode } = req.body;
+    const { companyCode} = req.body;
 
     // Validate input
     if (!companyCode) {
@@ -115,6 +115,7 @@ const joinCompany = async (req, res) => {
     if (!company) {
       return res.status(404).json(new ApiResponse(404, null, "No company found for the given code"));
     }
+
 
     // Check for token
     const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
@@ -129,12 +130,18 @@ const joinCompany = async (req, res) => {
     } catch (err) {
       return res.status(401).json(new ApiResponse(401, null, "Invalid or expired token"));
     }
+     const user = await User.findById(decodedToken._id)
+
 
     // Add user to the company
     if (!company.workers.includes(decodedToken._id)) {
       company.workers.push(decodedToken._id);
+      user.working.push(company._id)
       await company.save();
+      await user.save();
     }
+    
+
 
     return res.status(200).json(new ApiResponse(200, company, "Successfully joined the company"));
   } catch (error) {

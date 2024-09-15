@@ -10,6 +10,8 @@ import { User } from "../models/user.model.js";
 const createTaskAndAssign = async (req, res) => {
   try {
     const { taskName, projectId, userId, taskProgress, priority, dueDate,companyId } = req.body;
+    console.log(req.body);
+    
     
     const project = await Project.findById(projectId);
     if (!project) {
@@ -23,13 +25,16 @@ const createTaskAndAssign = async (req, res) => {
     }
 
     const validUserIds = company.workers.map(worker => worker._id.toString());
+    console.log("These are valid userIds",validUserIds);
+    console.log("THIS IS USER ID",userId);
+    
+    
     if (!validUserIds.includes(userId.toString())) {
       throw new ApiError(400, "Invalid user for the company");
     }
 
     const task = await Task.create({
       taskName,
-      userId,
       taskProgress: taskProgress || 1,
       priority: priority || 2,
       dueDate,
@@ -50,7 +55,6 @@ const createTaskAndAssign = async (req, res) => {
     return res.status(500).json(new ApiError(500, "Internal Server Error"));
   }
 };
-
 const deleteTask = async(req,res)=>{
 
   try {
@@ -92,8 +96,50 @@ const editTask = async(req,res)=>{
     
   }
 }
+const getCompanyTasks = async (req, res) => {
+  const { userId, companyId } = req.body;
+
+  try {
+    const company = await Company.findById(companyId).populate("projects");
+
+    if (!company) {
+      throw new ApiError(404, "No company found");
+    }
+
+    let todos = [];
+    for (const project of company.projects) {
+      await project.populate("todos");
+      todos.push(...project.todos);
+    }
+
+    const myTodos = todos.filter((todo) => todo.asign == userId);
+
+    return res.status(201).json(new ApiResponse(201,myTodos, "Tasks fetched successfully"));
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+const editTaskProgress = async(req,res)=>{
+  try {
+    const {taskId,progress} = req.body;
+    let task = await Task.findById(taskId);
+    if(!task){
+      return  res.status(404).json({ message: "Task not found" });
+    }
+   
+    task.taskProgress = progress|| task.taskProgress;
+    const updatedTask = await task.save();
+    return res.status(201).json(new ApiResponse(200,updatedTask,"Task updated successfully"))
+
+
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
 
 
 
 
-export  {createTaskAndAssign,editTask,deleteTask};
+
+export  {createTaskAndAssign,editTask,deleteTask,getCompanyTasks};

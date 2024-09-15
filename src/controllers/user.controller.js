@@ -249,6 +249,29 @@ const getAllTasks = async (req,res)=>{
   }
 }
 
+
+
+
+const getAllJoinedCompanies = async(req,res) => {
+  try {
+    const {userId}=req.body;
+    const user = await User.findById(userId).populate("working")
+    if (!user) {
+      throw new ApiError(400,"User Not Found")
+    }
+
+    const CompanyDetails = user.working.map(company=>({
+      id : company._id.toString(),
+      name:company.companyName
+    }))
+
+    return res.status(201).json(new ApiResponse(201,CompanyDetails,"results fetched"))
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export {
   registerUser,
   loginUser,
@@ -257,5 +280,6 @@ export {
   refreshAccessToken,
   checking,
   getAllCompanies,
-  getAllTasks
+  getAllTasks,
+  getAllJoinedCompanies
 };

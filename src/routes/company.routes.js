@@ -2,7 +2,7 @@ import { Router } from "express";
 import {createCompany, getAllWorkers, getCompanyDetails, joinCompany} from "../controllers/company.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {createProject,getProjectDetails} from "../controllers/project.controller.js";
-import {createTaskAndAssign,deleteTask,editTask} from "../controllers/task.controller.js";
+import {createTaskAndAssign,deleteTask,editTask, getCompanyTasks} from "../controllers/task.controller.js";
 
 
 const router = Router()
@@ -15,6 +15,7 @@ router.route("/joinCompany").post(joinCompany)
 router.route("/getWorkers").post(getAllWorkers)
 router.route("/task/delete").post(deleteTask)
 router.route("/task/edit").post(editTask)
+router.route("/getCompanyTasks").post(getCompanyTasks)
 
 
 export default router;
